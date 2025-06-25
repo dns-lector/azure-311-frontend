@@ -6,11 +6,14 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
 
+  const atobUtf = (str) => new TextDecoder().decode(Uint8Array.from(atob(str.replace(/\-/g, '+').replace(/\_/g, '/')), c => c.charCodeAt(0)));
+  const btoaUtf = (str) => btoa(String.fromCharCode(...new TextEncoder().encode(str))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
   const signInClick = () => {
-    const credentials = btoa(login + ':' + password);
+    const credentials = btoaUtf(login + ':' + password);
     console.log(login, password, credentials);
-    fetch("https://pv133od0.azurewebsites.net/Cosmos/SignIn", {
-    // fetch("https://localhost:7224/Cosmos/SignIn", {
+    // fetch("https://pv133od0.azurewebsites.net/Cosmos/SignIn", {
+    fetch("https://localhost:7224/Cosmos/SignIn", {
         headers: {
             'Authorization': 'Basic ' + credentials
         }
@@ -19,7 +22,7 @@ export default function Auth() {
             if (j.status.isOk) {
                 console.log(j.data);
                 setToken(j.data);
-                setName( JSON.parse( atob(j.data.split('.')[1]) ).nam );
+                setName( JSON.parse( atobUtf(j.data.split('.')[1]) ).nam );
             }
             else {
                 console.error(j);
