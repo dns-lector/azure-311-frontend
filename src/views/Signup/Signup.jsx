@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AppContext } from "../../context/AppContext";
 
 export default function Signup() {
+    const {request} = useContext(AppContext);
     const [name, setName] = useState("");
     const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
@@ -24,7 +26,7 @@ export default function Signup() {
         formData.append("user-password", password);
         formData.append("user-repeat", repeatPassword);
  
-        fetch("https://pv133od0.azurewebsites.net/Cosmos/SignUp", {
+        request("/Cosmos/SignUp", {
             method: 'POST',
             body: formData
         }).then(r => r.json())
